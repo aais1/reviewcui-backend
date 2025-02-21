@@ -5,9 +5,9 @@ import authRouter from "./routes/auth";
 import dataRouter from "./routes/data";
 import { dbConnect } from "../lib/dbConnect";
 import { Faculty } from "./models/Faculty";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 
 const app = express();
-const PORT = 3069;
 
 // ✅ Configure CORS properly
 app.use(
@@ -21,23 +21,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // ✅ Enable cookies in Express
 
-// Routes
-app.use("/auth", authRouter);
-app.use("/data", dataRouter);
-
-app.get("/", (req, res) => {
-  res.send("🚀 Express Server is Running!");
+// ✅ Ensure database connection before handling requests
+dbConnect().then(() => {
+  console.log("✅ Database Connected");
 });
 
-// Start Server
-app.listen(PORT, async () => {
-  dbConnect();
-  const faculty = await Faculty.find();
-  // Using a regular for loop
-  // for (const f of faculty) {
-  //   f.set("reviews", []);
-  //   await f.save();
-  //   console.log(`Faculty with ID ${f._id} reviews have been cleared.`);
-  // }
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+// ✅ Routes
+app.use("/api/auth", authRouter);
+app.use("/api/data", dataRouter);
+
+app.get("/api", (req, res) => {
+  res.send("🚀 Express Server is Running on Vercel!");
 });
+
+// ✅ Export app as a serverless function for Vercel
+export default (req: VercelRequest, res: VercelResponse) => {
+  return app(req as any, res as any);
+};
