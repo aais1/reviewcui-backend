@@ -12,7 +12,7 @@ const PORT = 3069;
 // ✅ Configure CORS properly
 app.use(
   cors({
-    origin: "https://reviewcui-frontend.vercel.app", // ✅ Set frontend origin explicitly
+    origin: "https://reviewcui-frontend.vercel.app",
     credentials: true, // ✅ Allow cookies and authentication headers
   })
 );
