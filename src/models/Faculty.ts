@@ -17,6 +17,7 @@ const FacultySchema = new mongoose.Schema({
       userImage: String,
       likes: Number,
       replies: Number,
+      userId: mongoose.Schema.Types.ObjectId,
     },
   ],
 });
