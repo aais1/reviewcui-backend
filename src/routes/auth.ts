@@ -55,13 +55,14 @@ router.post("/sign-in", async (req, res): Promise<any> => {
       expiresIn: "7d",
     });
 
-    // Set Cookie with Token (HTTP-only for security)
+    // Set Cookie with Token (HTTP-only [cant access by js] for security)
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Secure in production
-      sameSite: "strict",
+      sameSite: "none", // 🔥 imp for cross-origin cookies
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
+
     console.log("cookie set");
 
     const { password: pass, ...userWithoutPassword } = user.toObject();
