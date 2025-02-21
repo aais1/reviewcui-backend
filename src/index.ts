@@ -7,12 +7,12 @@ import { dbConnect } from "../lib/dbConnect";
 import { Faculty } from "./models/Faculty";
 
 const app = express();
-const PORT = 3000;
+const PORT = 3069;
 
 // ✅ Configure CORS properly
 app.use(
   cors({
-    origin: "http://localhost:5173", // ✅ Set frontend origin explicitly
+    origin: "https://reviewcui-frontend.vercel.app", // ✅ Set frontend origin explicitly
     credentials: true, // ✅ Allow cookies and authentication headers
   })
 );
