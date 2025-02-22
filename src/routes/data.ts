@@ -214,30 +214,18 @@ router.get("/top-three", async (req, res) => {
   try {
     const faculties = await Faculty.find({});
 
-    // Calculate average rating for each faculty and sort by rating
-    const topFaculties = faculties
-      .map((faculty) => {
-        const totalReviews = faculty.reviews.length || 0;
-        const avgRating =
-          totalReviews > 0
-            ? faculty.reviews.reduce(
-                (sum, review) => sum + (review.rating || 0),
-                0
-              ) / totalReviews
-            : 0;
+    // Sort faculties by the number of reviews in descending order
+    const topThreeMostReviewed = faculties
+      .map((faculty) => ({
+        ...faculty.toObject(),
+        totalReviews: faculty.reviews.length,
+      }))
+      .sort((a, b) => b.totalReviews - a.totalReviews) // Sort by most reviews
+      .slice(0, 3); // Get top 3
 
-        return {
-          ...faculty.toObject(),
-          rating: avgRating.toFixed(1),
-          totalReviews,
-        };
-      })
-      .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating)) // Sort by rating in descending order
-      .slice(0, 3); // Take top 3 faculties
-
-    res.json(topFaculties);
+    res.json(topThreeMostReviewed);
   } catch (error) {
-    console.error("Error fetching top three faculties:", error);
+    console.error("Error fetching top three most reviewed faculties:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
