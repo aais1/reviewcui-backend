@@ -23,6 +23,7 @@ export function checkToken(
       }
     );
   } else if (req.headers.authorization?.split(" ")[1]) {
+    console.log("debug" + req.headers.authorization.split(" ")[1]);
     jwt.verify(
       req.headers.authorization.split(" ")[1],
       "your_secret_key",
