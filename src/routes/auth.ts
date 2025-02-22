@@ -84,7 +84,7 @@ router.post("/sign-in", async (req, res): Promise<any> => {
 
 // ✅ LOGOUT Route (Clears the Cookie)
 router.post("/logout", async (req, res) => {
-  res.clearCookie("token", { httpOnly: true, sameSite: "strict" });
+  res.clearCookie("token", { httpOnly: true, sameSite: "none" });
   res.json({ message: "Logged out successfully" });
 });
 
