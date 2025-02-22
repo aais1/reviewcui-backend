@@ -33,7 +33,7 @@ export function checkToken(
             .json({ message: "Unauthorized. Invalid token." });
         }
         req.body.userId = decoded.userId;
-        return;
+        return next();
       }
     );
   } else {
