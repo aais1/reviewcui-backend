@@ -22,8 +22,10 @@ export function checkToken(
         return next();
       }
     );
-  } else if (req.headers.authorization?.split(" ")[1]) {
-    console.log("debug" + req.headers.authorization.split(" ")[1]);
+  }
+  //this if for ios/Safari not accepting cross origin cookies
+  else if (req.headers.authorization?.split(" ")[1]) {
+    console.log("debug " + req.headers.authorization.split(" ")[1]);
     jwt.verify(
       req.headers.authorization.split(" ")[1],
       "your_secret_key",
