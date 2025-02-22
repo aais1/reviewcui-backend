@@ -214,12 +214,21 @@ router.get("/top-three", async (req, res) => {
   try {
     const faculties = await Faculty.find({});
 
-    // Sort faculties by the number of reviews in descending order
+    // Sort faculties by the number of reviews in descending order and calculate total rating
     const topThreeMostReviewed = faculties
-      .map((faculty) => ({
-        ...faculty.toObject(),
-        totalReviews: faculty.reviews.length,
-      }))
+      .map((faculty) => {
+        const totalReviews = faculty.reviews.length;
+        const totalRating = faculty.reviews.reduce(
+          (sum, review) => sum + (review.rating || 0),
+          0
+        );
+
+        return {
+          ...faculty.toObject(),
+          totalReviews,
+          totalRating, // Total sum of ratings
+        };
+      })
       .sort((a, b) => b.totalReviews - a.totalReviews) // Sort by most reviews
       .slice(0, 3); // Get top 3
 
