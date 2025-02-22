@@ -22,6 +22,20 @@ export function checkToken(
         return next();
       }
     );
+  } else if (req.headers.authorization?.split(" ")[1]) {
+    jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      "your_secret_key",
+      (err: any, decoded: any) => {
+        if (err) {
+          return res
+            .status(401)
+            .json({ message: "Unauthorized. Invalid token." });
+        }
+        req.body.userId = decoded.userId;
+        return;
+      }
+    );
   } else {
     return res.status(401).json({ message: "Unauthorized. Token missing." });
   }
