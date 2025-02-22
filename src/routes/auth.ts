@@ -67,7 +67,13 @@ router.post("/sign-in", async (req, res): Promise<any> => {
 
     const { password: pass, ...userWithoutPassword } = user.toObject();
 
-    res.json({ message: "Login successful", user: userWithoutPassword });
+    res.json({
+      message: "Login successful",
+      user: {
+        ...userWithoutPassword,
+        token,
+      },
+    });
   } catch (error: any) {
     console.error("Sign-In Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
