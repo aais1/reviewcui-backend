@@ -128,7 +128,7 @@ router.post("/verify-otp", async (req, res): Promise<any> => {
 
 // ✅ SIGN-IN Route
 router.post("/sign-in", async (req, res): Promise<any> => {
-  const { email, userPassword } = req.body;
+  const { email, password: userPassword } = req.body;
 
   try {
     const user = await User.findOne({ email });
