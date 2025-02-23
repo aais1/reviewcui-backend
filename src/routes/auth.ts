@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // ✅ SEND OTP Route (Store User Temp & Send OTP)
-router.post("/send-otp", async (req, res) => {
+router.post("/send-otp", async (req, res): Promise<any> => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -73,7 +73,7 @@ router.post("/send-otp", async (req, res) => {
 });
 
 // ✅ VERIFY OTP & CREATE USER
-router.post("/verify-otp", async (req, res) => {
+router.post("/verify-otp", async (req, res): Promise<any> => {
   const { email, otp } = req.body;
 
   if (!email || !otp) {
@@ -113,7 +113,7 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 // ✅ SIGN-IN Route
-router.post("/sign-in", async (req, res) => {
+router.post("/sign-in", async (req, res): Promise<any> => {
   const { email, password } = req.body;
 
   try {
