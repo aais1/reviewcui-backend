@@ -128,14 +128,14 @@ router.post("/verify-otp", async (req, res): Promise<any> => {
 
 // ✅ SIGN-IN Route
 router.post("/sign-in", async (req, res): Promise<any> => {
-  const { email, password } = req.body;
+  const { email, userPassword } = req.body;
 
   try {
     const user = await User.findOne({ email });
     if (!user)
       return res.status(401).json({ message: "Invalid email or password." });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(userPassword, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid email or password." });
 
