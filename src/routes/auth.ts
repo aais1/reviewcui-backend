@@ -152,7 +152,15 @@ router.post("/sign-in", async (req, res): Promise<any> => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ message: "Login successful.", user });
+    const { password, ...userWithoutPassword } = user.toObject();
+
+    res.status(200).json({
+      message: "Login successful.",
+      user: {
+        ...userWithoutPassword,
+        token,
+      },
+    });
   } catch (error) {
     console.error("Sign-In Error:", error);
     res.status(500).json({ message: "Failed to sign in." });
