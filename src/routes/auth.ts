@@ -13,8 +13,8 @@ const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASS,
+    user: "aaisali228@gmail.com",
+    pass: "wefh ktps rukq nszv",
   },
 });
 
@@ -57,7 +57,7 @@ router.post("/send-otp", async (req, res): Promise<any> => {
 
     // Send OTP via Email
     await transporter.sendMail({
-      from: process.env.EMAIL,
+      from: "aaisali228@gmail.com",
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP code is: ${otp}. It will expire in 10 minutes.`,
@@ -72,7 +72,7 @@ router.post("/send-otp", async (req, res): Promise<any> => {
   }
 });
 
-// ✅ VERIFY OTP & CREATE USER
+// ✅ VERIFY OTP, CREATE USER & SET JWT COOKIE
 router.post("/verify-otp", async (req, res): Promise<any> => {
   const { email, otp } = req.body;
 
@@ -100,12 +100,26 @@ router.post("/verify-otp", async (req, res): Promise<any> => {
     const newUser = new User({ name, email, password });
     await newUser.save();
 
+    // Generate JWT Token
+    const token = jwt.sign({ userId: newUser._id }, SECRET_KEY, {
+      expiresIn: "7d",
+    });
+
+    // Set JWT token as an HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Set true if using HTTPS
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     // Clean up OTP entry
     await OTP.deleteOne({ email });
 
-    res
-      .status(200)
-      .json({ message: "Account created successfully! You can now sign in." });
+    res.status(200).json({
+      message: "Account created successfully! Token set in cookies.",
+      user: { name, email },
+    });
   } catch (error) {
     console.error("Verify OTP Error:", error);
     res.status(500).json({ message: "Failed to verify OTP." });
@@ -125,10 +139,12 @@ router.post("/sign-in", async (req, res): Promise<any> => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid email or password." });
 
+    // Generate JWT Token
     const token = jwt.sign({ userId: user._id }, SECRET_KEY, {
       expiresIn: "7d",
     });
 
+    // Set Cookie with Token
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -136,7 +152,7 @@ router.post("/sign-in", async (req, res): Promise<any> => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({ message: "Login successful.", user, token });
+    res.status(200).json({ message: "Login successful.", user });
   } catch (error) {
     console.error("Sign-In Error:", error);
     res.status(500).json({ message: "Failed to sign in." });
