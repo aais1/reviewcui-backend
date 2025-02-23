@@ -34,7 +34,7 @@ router.post("/send-otp", async (req, res): Promise<any> => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email is already registered." });
+      return res.status(300).json({ message: "Email is already registered." });
     }
 
     // Generate 4-digit OTP
